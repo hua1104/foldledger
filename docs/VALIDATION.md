@@ -1,5 +1,19 @@
 # 本地验证记录
 
+## 2026-10-05：修复新版工具链兼容性
+
+在项目 `_build/toolchain-new/runtime` 中隔离安装 MoonBit，未覆盖全局工具链。
+用 `moon 0.1.20260920 (914d7da)`、`moonc v0.10.14+7d59c7ec9`
+实际执行 `node scripts/verify.mjs`：格式、零警告检查、7 个核心测试、JS 构建、
+9 个 CLI 测试全部通过。随后在原有 `moon 0.1.20260713` 上完整复测也通过。
+
+修复：Binding/Duplex 显式提供 equal/not_equal，保留 Eq 派生并消除隐式方法提升；
+黑盒测试显式使用 `@foldledger` 限定 API，消除新版隐式测试导入警告。
+生成接口已按新版工具链更新。未禁用警告检查。以上为 Windows 实测，
+GitHub Linux runner 仍需推送后重新运行确认。
+
+## 初次验证
+
 日期：2026-10-05，Windows PowerShell。
 
 - MoonBit：moon 0.1.20260713 (75c7e1f 2026-07-13)。

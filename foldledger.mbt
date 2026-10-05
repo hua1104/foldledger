@@ -6,11 +6,38 @@ pub(all) enum Binding {
 } derive(Eq)
 
 ///|
+/// Explicit methods keep Eq usable without deprecated implicit promotion.
+pub fn Binding::equal(self : Binding, other : Binding) -> Bool {
+  match (self, other) {
+    (Left, Left) | (Right, Right) => true
+    _ => false
+  }
+}
+
+///|
+pub fn Binding::not_equal(self : Binding, other : Binding) -> Bool {
+  !self.equal(other)
+}
+
+///|
 /// Landscape duplex edge. Long-edge backs need a 180-degree content rotation.
 pub(all) enum Duplex {
   ShortEdge
   LongEdge
 } derive(Eq)
+
+///|
+pub fn Duplex::equal(self : Duplex, other : Duplex) -> Bool {
+  match (self, other) {
+    (ShortEdge, ShortEdge) | (LongEdge, LongEdge) => true
+    _ => false
+  }
+}
+
+///|
+pub fn Duplex::not_equal(self : Duplex, other : Duplex) -> Bool {
+  !self.equal(other)
+}
 
 ///|
 /// Each signature is a separately folded and nested gathering.

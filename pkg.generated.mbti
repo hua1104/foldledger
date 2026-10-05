@@ -23,6 +23,8 @@ pub(all) enum Binding {
   Left
   Right
 } derive(Eq)
+pub fn Binding::equal(Self, Self) -> Bool
+pub fn Binding::not_equal(Self, Self) -> Bool
 
 pub(all) struct Config {
   signature_pages : Int
@@ -34,6 +36,8 @@ pub(all) enum Duplex {
   ShortEdge
   LongEdge
 } derive(Eq)
+pub fn Duplex::equal(Self, Self) -> Bool
+pub fn Duplex::not_equal(Self, Self) -> Bool
 
 pub(all) struct Plan {
   source_pages : Int
@@ -58,4 +62,3 @@ pub(all) struct Sheet {
 // Type aliases
 
 // Traits
-
