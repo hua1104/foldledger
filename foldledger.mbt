@@ -46,7 +46,14 @@ pub(all) struct Plan {
 
 ///|
 pub fn default_config() -> Config {
-  { signature_pages: 16, binding: Left, duplex: ShortEdge }
+  {
+    // Four sheets per separately folded gathering.
+    signature_pages: 16,
+    // Faces are viewed from their own printed side.
+    binding: Left,
+    // Landscape short-edge duplex requires no back rotation.
+    duplex: ShortEdge,
+  }
 }
 
 ///|
