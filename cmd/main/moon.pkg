@@ -1,0 +1,5 @@
+import {
+  "hua1104/foldledger" @lib,
+}
+
+pkgtype(kind: "executable")

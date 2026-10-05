@@ -1,0 +1,61 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "hua1104/foldledger"
+
+// Values
+pub fn default_config() -> Config
+
+pub fn make_plan(Int, Array[Int], Config) -> Result[Plan, String]
+
+pub fn parse_positive(String, Int) -> Result[Int, String]
+
+pub fn parse_selection(String, Int) -> Result[Array[Int], String]
+
+pub fn plan_to_json(Plan) -> String
+
+pub fn plan_to_svg(Plan) -> String
+
+pub fn plan_to_text(Plan) -> String
+
+// Errors
+
+// Types and methods
+pub(all) enum Binding {
+  Left
+  Right
+} derive(Eq)
+
+pub(all) struct Config {
+  signature_pages : Int
+  binding : Binding
+  duplex : Duplex
+}
+
+pub(all) enum Duplex {
+  ShortEdge
+  LongEdge
+} derive(Eq)
+
+pub(all) struct Plan {
+  source_pages : Int
+  selected : Array[Int]
+  padded_pages : Int
+  blanks : Int
+  signatures : Int
+  config : Config
+  sheets : Array[Sheet]
+}
+
+pub(all) struct Sheet {
+  signature : Int
+  depth : Int
+  front_left : Int
+  front_right : Int
+  back_left : Int
+  back_right : Int
+  back_rotation : Int
+}
+
+// Type aliases
+
+// Traits
+

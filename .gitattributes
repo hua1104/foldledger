@@ -1,0 +1,5 @@
+* text=auto
+*.mbt text eol=lf
+*.mbti text eol=lf whitespace=-blank-at-eof
+*.mjs text eol=lf
+*.yml text eol=lf

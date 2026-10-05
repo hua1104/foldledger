@@ -1,0 +1,11 @@
+.DS_Store
+_build/
+target/
+.mooncakes/
+.moonagent/
+# Local output from earlier exploration; not part of the submission.
+cli-*.txt
+cli-*.json
+# Default interactive demonstration output.
+/plan.json
+/preview.svg
