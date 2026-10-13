@@ -8,6 +8,7 @@
 
 ```powershell
 Set-Location 'C:\Users\jin\Desktop\2'
+npm ci
 node scripts/verify.mjs
 if ($LASTEXITCODE -ne 0) { throw '验证失败，停止上传' }
 gh auth login
@@ -41,6 +42,7 @@ git push -u origin main
 
 ```powershell
 Set-Location 'C:\Users\jin\Desktop\2'
+npm ci
 node scripts/verify.mjs
 if ($LASTEXITCODE -ne 0) { throw '验证失败' }
 git add .

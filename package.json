@@ -7,6 +7,7 @@
   "scripts": {
     "build:planner": "moon build --target js cmd/main",
     "impose": "npm run build:planner && node scripts/impose-pdf.mjs",
+    "demo": "npm run build:planner && node scripts/create-demo.mjs --force",
     "test": "npm run build:planner && node --test tests/cli.integration.test.mjs tests/pdf.integration.test.mjs"
   },
   "dependencies": {

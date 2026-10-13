@@ -122,6 +122,7 @@ npm run impose -- --input event.pdf --output event-booklet.pdf --signature 16 --
 - 调用 MoonBit 规划器生成每张纸的正面和背面，并输出两页合一的拼版 PDF。
 - 同时保存 JSON 计划和 SVG 预览；拒绝覆盖已有文件，并在失败时清理已创建的输出。
 - 支持页码选择、分册容量、左右装订和长边/短边双面设置。
+- 输入 PDF 页面尺寸必须一致；页面内容会被嵌入输出，注释、表单和交互元数据不保证保留。
 
 ### （6）工程验证
 
