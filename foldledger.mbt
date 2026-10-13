@@ -42,7 +42,7 @@ pub fn Duplex::not_equal(self : Duplex, other : Duplex) -> Bool {
 ///|
 /// Each signature is a separately folded and nested gathering.
 pub(all) struct Config {
-  signature_pages : Int
+  signature_pages : Int32
   binding : Binding
   duplex : Duplex
 }
@@ -50,23 +50,23 @@ pub(all) struct Config {
 ///|
 /// Page 0 means an inserted blank. All other values are original document pages.
 pub(all) struct Sheet {
-  signature : Int
-  depth : Int
-  front_left : Int
-  front_right : Int
-  back_left : Int
-  back_right : Int
-  back_rotation : Int
+  signature : Int32
+  depth : Int32
+  front_left : Int32
+  front_right : Int32
+  back_left : Int32
+  back_right : Int32
+  back_rotation : Int32
 }
 
 ///|
 /// Array order is signature order, then outermost to innermost sheet.
 pub(all) struct Plan {
-  source_pages : Int
-  selected : Array[Int]
-  padded_pages : Int
-  blanks : Int
-  signatures : Int
+  source_pages : Int32
+  selected : Array[Int32]
+  padded_pages : Int32
+  blanks : Int32
+  signatures : Int32
   config : Config
   sheets : Array[Sheet]
 }
@@ -85,7 +85,7 @@ pub fn default_config() -> Config {
 
 ///|
 /// Strict bounded integer parser used by the selection grammar and CLI.
-pub fn parse_positive(text : String, maximum : Int) -> Result[Int, String] {
+pub fn parse_positive(text : String, maximum : Int32) -> Result[Int32, String] {
   if text == "" || maximum < 1 {
     return Err("expected a positive integer")
   }
@@ -113,15 +113,15 @@ pub fn parse_positive(text : String, maximum : Int) -> Result[Int, String] {
 /// Order is preserved. Duplicate, descending and out-of-document pages are errors.
 pub fn parse_selection(
   text : String,
-  total : Int,
-) -> Result[Array[Int], String] {
+  total : Int32,
+) -> Result[Array[Int32], String] {
   if total < 1 || total > 10000 {
     return Err("document page count must be 1..10000")
   }
   if text.trim().to_owned() == "" {
     return Err("selection must not be empty")
   }
-  let pages : Array[Int] = []
+  let pages : Array[Int32] = []
   let seen = Array::make(total + 1, false)
   for part in text.split(",") {
     let range = part.trim().to_owned().split("-").to_array()
@@ -159,8 +159,8 @@ pub fn parse_selection(
 ///|
 /// Last signature is padded only to the nearest multiple of four.
 pub fn make_plan(
-  total : Int,
-  selected : Array[Int],
+  total : Int32,
+  selected : Array[Int32],
   config : Config,
 ) -> Result[Plan, String] {
   if total < 1 || total > 10000 {
@@ -248,7 +248,12 @@ pub fn make_plan(
 }
 
 ///|
-fn slot(pages : Array[Int], offset : Int, count : Int, index : Int) -> Int {
+fn slot(
+  pages : Array[Int32],
+  offset : Int32,
+  count : Int32,
+  index : Int32,
+) -> Int32 {
   if index >= count {
     0
   } else {
@@ -300,7 +305,7 @@ pub fn plan_to_json(plan : Plan) -> String {
 }
 
 ///|
-fn page_label(page : Int) -> String {
+fn page_label(page : Int32) -> String {
   if page == 0 {
     "BLANK"
   } else {
@@ -406,12 +411,12 @@ pub fn plan_to_svg(plan : Plan) -> String {
 
 ///|
 fn face_svg(
-  x : Int,
-  y : Int,
-  left : Int,
-  right : Int,
+  x : Int32,
+  y : Int32,
+  left : Int32,
+  right : Int32,
   label : String,
-  rotation : Int,
+  rotation : Int32,
 ) -> String {
   let center = x + 220
   "<g><rect x=\"" +

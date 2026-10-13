@@ -1,7 +1,7 @@
 ///|
 fn require_plan(
-  total : Int,
-  selected : Array[Int],
+  total : Int32,
+  selected : Array[Int32],
   config : @foldledger.Config,
 ) -> @foldledger.Plan {
   match @foldledger.make_plan(total, selected, config) {

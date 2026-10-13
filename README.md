@@ -14,7 +14,7 @@
 
 ## 两分钟运行
 
-需要 MoonBit（CI 固定为已验证的 `0.1.20260920`）、Node.js 22+ 和 npm。首次运行先安装 PDF 适配器依赖：
+需要 MoonBit（当前已验证稳定版 `0.1.20261012`，CI 使用官方 `latest` 稳定通道）、Node.js 22+ 和 npm。首次运行先安装 PDF 适配器依赖：
 
 ```powershell
 npm ci

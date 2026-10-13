@@ -156,7 +156,7 @@ extern "js" fn cli_args() -> FixedArray[String] =
   #| () => process.argv.slice(2)
 
 ///|
-extern "js" fn exit_with(code : Int) -> Unit =
+extern "js" fn exit_with(code : Int32) -> Unit =
   #| code => process.exit(code)
 
 ///|

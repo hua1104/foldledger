@@ -20,11 +20,11 @@ node scripts/verify.mjs
 if ($LASTEXITCODE -ne 0) { throw '验收失败，停止上传' }
 ```
 
-MoonBit 的已验证版本为 `0.1.20260920`；CI 使用该版本，Node.js 使用 24。准备完成后再依次执行下面三个命令块。任何一块失败均先处理失败原因，再继续下一块。
+MoonBit 当前已验证稳定版为 `0.1.20261012`；CI 使用官方 `latest` 稳定通道并记录实际版本，Node.js 使用 24。历史版本 `0.1.20260920` 的 Linux 下载地址返回 403，因此不再用于 CI 安装。准备完成后再依次执行下面三个命令块。任何一块失败均先处理失败原因，再继续下一块。
 
-## 第一次：固定 CI 工具链
+## 第一次：配置 CI 工具链
 
-本次改动固定 MoonBit 版本，并在 CI 日志中输出工具链版本。
+本次改动配置 MoonBit 官方稳定通道，并在 CI 日志中输出工具链版本。
 
 ```powershell
 git add -- .github/workflows/ci.yml
