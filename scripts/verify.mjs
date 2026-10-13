@@ -8,7 +8,7 @@ const commands = [
   [moon,['check','--deny-warn']],
   [moon,['test','--deny-warn']],
   [moon,['build','--target','js','cmd/main']],
-  [process.execPath,['--test','tests/cli.integration.test.mjs']],
+  [process.execPath,['--test','tests/cli.integration.test.mjs','tests/pdf.integration.test.mjs']],
 ];
 for (const [command,args] of commands) {
   const result = spawnSync(command,args,{cwd,stdio:'inherit'});

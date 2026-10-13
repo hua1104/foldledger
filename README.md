@@ -8,17 +8,26 @@
 
 20 页资料按普通双面打印后直接对折，页序不会正确；按 16 页一册装订，还要分别处理前 16 页和最后 4 页。FoldLedger 把这些决定变成可检查的数据，支持从原稿抽取部分页码、左右装订和两种双面翻转设置。每页出现一次，补白位置可解释，末册仅补到最近的 4 页倍数。
 
-本项目生成 **拼版计划和示意图**，不读取、修改或打印 PDF。PDF 页面合成器可以消费 JSON 的每个 sheet：按 front/back 左右放置原页，0 放空白，背面按 back_rotation 旋转整个画布。当前交付并未实现该合成器。
+本项目生成 **拼版计划、示意图和双面拼版 PDF**。MoonBit 负责页码与纸张布局，Node.js 适配层读取原始 PDF，将每张纸的正面和背面按计划左右排版；0 表示补白，长边双面会在输出 PDF 的背面页写入 180° 旋转。
 
 ## 两分钟运行
 
-需要 MoonBit 和 Node.js 22+。本地验证版本：moon 0.1.20260713、Node.js 24.18.0，JS 目标，无第三方库。
+需要 MoonBit、Node.js 22+ 和 npm。首次运行先安装 PDF 适配器依赖：
 
 ```powershell
+npm ci
 moon build --target js cmd/main
 moon run cmd/main -- --pages 20 --signature 16
 moon run cmd/main -- --pages 20 --out plan.json --svg preview.svg
 ```
+
+对真实 PDF 执行完整 MVP 流程：
+
+```powershell
+npm run impose -- --input source.pdf --output booklet.pdf --signature 16 --duplex short
+```
+
+命令会生成 `booklet.pdf`、`booklet.json` 和 `booklet.svg`；默认要求输入 PDF 的所有页面尺寸一致，并拒绝覆盖已有输出。也可以用 `--select "1-8,21-30"` 只拼版指定的原稿页。
 
 输出路径的父目录须已存在；工具拒绝覆盖已有文件。重复演示时使用新文件名。纯 JSON 到标准输出：
 
@@ -72,13 +81,13 @@ match @fold.parse_selection("1-8,13-16", 20) {
 node scripts/verify.mjs
 ```
 
-脚本逐项执行格式检查、零警告检查、7 个 MoonBit 测试、JS 构建和 9 个 CLI 集成测试，任一步失败即停止。核心测试包含 2,580 组页码守恒/折页配对组合；集成测试包含 10,000 页输入、错误参数、JSON 解析、拒绝覆盖和避免部分输出。
+脚本逐项执行格式检查、零警告检查、7 个 MoonBit 测试、JS 构建和 12 个 CLI/PDF 集成测试，任一步失败即停止。核心测试包含 2,580 组页码守恒/折页配对组合；集成测试包含 10,000 页输入、错误参数、JSON 解析、拒绝覆盖、PDF 两页合一输出和长边旋转。
 
-GitHub Actions 已配置，上传前尚未在远端运行。本地仅验证 JS 后端；尝试 WASM-GC 时本机工具链缺少标准库构建产物，因此不把 WASM-GC 列为已验证目标。
+GitHub Actions 会先执行 `npm ci`，再运行同一套本地验收脚本。本地和 CI 均验证 JS 后端；尝试 WASM-GC 时本机工具链缺少标准库构建产物，因此不把 WASM-GC 列为已验证目标。
 
 ## 使用范围
 
-实现的是等宽双页、横向纸张的折叠小册子页码布局，不含裁切出血、爬移补偿、页尺寸、纸张厚度、PDF 合成和打印机驱动。`long/short` 是版面旋转约定，实际纸路可能不同；正式批量打印前先用一张带编号的纸校准。当前未做实体打印验证。
+实现的是等宽双页、横向纸张的折叠小册子页码布局和基础 PDF 合成，不含裁切出血、爬移补偿、纸张厚度和打印机驱动。输入 PDF 的页面尺寸必须一致；`long/short` 是版面旋转约定，实际纸路可能不同，正式批量打印前先用一张带编号的纸校准。当前仍未做实体打印验证。
 
 ## 原创性与参赛
 

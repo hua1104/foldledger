@@ -3,6 +3,7 @@ _build/
 target/
 .mooncakes/
 .moonagent/
+node_modules/
 # Local output from earlier exploration; not part of the submission.
 cli-*.txt
 cli-*.json

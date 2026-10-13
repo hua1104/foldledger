@@ -12,7 +12,7 @@ FoldLedger 是一个使用 MoonBit 编写的小册子拼版规划库和命令行
 
 FoldLedger 接收原稿页数、页码选择、每册容量、装订方向和双面翻转边，生成确定性的拼版计划。计划明确记录每张纸正反面对应的原稿页码、补白位置和背面旋转角度，同时提供 JSON、文本清单及 SVG 预览，便于人工核对或由下游程序接入。
 
-项目核心由 MoonBit 实现，包括页码解析、输入验证、分册算法、补白计算、装订转换和结果序列化。JavaScript 仅承担命令行文件与进程 I/O。当前交付范围是拼版规划与预览；PDF 页面合成和实际打印由后续适配器或使用者的排版工具完成。
+项目核心由 MoonBit 实现，包括页码解析、输入验证、分册算法、补白计算、装订转换和结果序列化。Node.js 适配层读取 PDF 并消费 MoonBit 计划，生成双面拼版 PDF；当前仍不包含打印机驱动和实体打印控制。
 
 ## 3、项目方向，通用性说明
 
@@ -39,12 +39,12 @@ FoldLedger 接收原稿页数、页码选择、每册容量、装订方向和双
 **输入与操作：** 教师输入原稿 20 页、每册 16 页、左侧装订和短边翻转，运行：
 
 ```bash
-moon run cmd/main -- --pages 20 --signature 16 --out lesson-plan.json --svg lesson-preview.svg
+npm run impose -- --input lesson.pdf --output lesson-booklet.pdf --signature 16
 ```
 
 **项目输出：** 生成 2 册、5 张双面纸、0 个补白页的计划。第一册包含原稿第 1–16 页，第二册包含第 17–20 页；第一张纸正面为 `[16, 1]`、背面为 `[2, 15]`，末张纸正面为 `[20, 17]`、背面为 `[18, 19]`。
 
-**后续使用与价值：** 教师先查看 SVG 确认册序，再由排版工具或另行接入的合成程序按 JSON 安排原稿页面，试印后分别套叠、对折各册。FoldLedger 将分册与页序计算显式化，减少手工排页错误；项目本身不执行 PDF 合成或打印。
+**后续使用与价值：** 教师先查看 SVG 确认册序，再用生成的 PDF 试印后分别套叠、对折各册。JSON 仍可供其他排版工具消费；项目不控制打印机纸路。
 
 ### 场景二：学生从复习资料中抽取章节制作便携小册
 
@@ -53,7 +53,7 @@ moon run cmd/main -- --pages 20 --signature 16 --out lesson-plan.json --svg less
 **输入与操作：** 学生使用页码选择表达式指定内容：
 
 ```bash
-moon run cmd/main -- --pages 40 --select "1-8,21-30" --signature 16 --out study-plan.json --svg study-preview.svg
+npm run impose -- --input study.pdf --output study-booklet.pdf --select "1-8,21-30" --signature 16
 ```
 
 **项目输出：** 按列举顺序选取 18 个原稿页面，生成 2 册、5 张双面纸。第一册包含所选的前 16 页；第二册包含原稿第 29、30 页，并在末尾补 2 个空白页。计划中的非零页码始终指向原稿页码，0 明确表示空白。
@@ -67,12 +67,12 @@ moon run cmd/main -- --pages 40 --select "1-8,21-30" --signature 16 --out study-
 **输入与操作：** 工作人员明确设置装订方向与翻转边：
 
 ```bash
-moon run cmd/main -- --pages 12 --signature 16 --binding right --duplex long --out event-plan.json --svg event-preview.svg
+npm run impose -- --input event.pdf --output event-booklet.pdf --signature 16 --binding right --duplex long
 ```
 
 **项目输出：** 生成 1 册、3 张纸、0 个补白页的计划。右装订会交换每面左右页槽；第一张纸旋转前的正面逻辑页槽为 `[1, 12]`、背面为 `[11, 2]`，背面整体旋转角度标记为 180°。SVG 展示对应的页码与旋转效果。
 
-**后续使用与价值：** 排版人员按计划处理背面画布，再用编号样纸确认打印机行为后批量制作。明确区分页槽与整体旋转，可以避免在排版程序和打印驱动中重复旋转。实体纸路校准属于后续制作步骤，尚未由本项目自动完成。
+**后续使用与价值：** 排版人员查看 JSON/SVG 并用生成的 PDF 试印，再用编号样纸确认打印机行为后批量制作。实体纸路校准属于后续制作步骤，尚未由本项目自动完成。
 
 ### 场景四：文档平台集成自动拼版规划
 
@@ -86,7 +86,7 @@ moon run cmd/main -- --pages 12 --signature 16 --binding right --duplex long --o
 
 ## 5、拟实现的核心功能
 
-本项目围绕“输入验证—拼版规划—结果审阅—下游集成”构建以下核心功能。下列第一至第五项已形成可运行实现，第六项为后续扩展计划。
+本项目围绕“输入文件—输入验证—拼版规划—可交付输出”构建以下核心功能。下列第一至第六项已形成可运行实现，第七项为后续扩展计划。
 
 ### （1）页码选择与严格输入验证
 
@@ -116,17 +116,23 @@ moon run cmd/main -- --pages 12 --signature 16 --binding right --duplex long --o
 - CLI 在写文件前完成输入验证，拒绝覆盖已有文件，并提供明确错误信息与退出码。
 - 采用 MIT License，提供使用文档、示例计划和可复现验收脚本。
 
-### （5）工程验证
+### （5）PDF MVP 适配器
+
+- 读取 1–10,000 页、页面尺寸一致的输入 PDF。
+- 调用 MoonBit 规划器生成每张纸的正面和背面，并输出两页合一的拼版 PDF。
+- 同时保存 JSON 计划和 SVG 预览；拒绝覆盖已有文件，并在失败时清理已创建的输出。
+- 支持页码选择、分册容量、左右装订和长边/短边双面设置。
+
+### （6）工程验证
 
 - 核心测试涵盖已知 8 页布局、跨册边界、原页映射、补白、左右装订和旋转设置。
 - 遍历 2,580 种组合，验证原页不丢失、不重复、补白数量和折页配对关系。
-- CLI 测试覆盖 10,000 页输入、JSON 解析、文件保护和参数错误。
-- 当前 7 个 MoonBit 测试、9 个 CLI 集成测试已通过；已在 2026-07-13 与 2026-09-20 两版 MoonBit 工具链的 JS 路径执行完整验证。
+- CLI/PDF 测试覆盖 10,000 页输入、JSON 解析、文件保护、参数错误、两页合一 PDF 和背面旋转。
+- 当前 7 个 MoonBit 测试、12 个 CLI/PDF 集成测试已通过；已在本地 MoonBit JS 路径执行完整验证。
 - 验收入口：`node scripts/verify.mjs`。当前结果不等同于实体打印验证。
 
-### （6）后续扩展计划
+### （7）后续扩展计划
 
-- 开发消费现有 JSON 计划的 PDF 页面合成适配器。
 - 对不同打印设置开展实体样张验证，记录装订、翻转与纸路配置。
 - 根据实际印制需求探索爬移补偿、出血和裁切线。
 
@@ -157,6 +163,6 @@ FoldLedger 的 MoonBit 数据模型、页码解析、分册规划、输入验证
 | pdfbook2 | https://ctan.org/pkg/pdfbook2 | 参考小册子制作工具的产品用途；未复制、修改、链接或分发其源码，也不调用其 TeX 运行时 |
 | Adobe Acrobat 小册子打印说明 | https://helpx.adobe.com/acrobat/using/print-booklets-pdf-portfolios.html | 参考用户的双面打印与小册子工作流；属于商业产品使用说明，并非本项目移植的开源代码 |
 
-以上资料仅作为产品背景参考，不据此宣称取得其源码授权。若后续版本实际引入第三方实现，将在引入前核对其具体许可证并补充来源、版权声明和合规说明。
+PDF MVP 适配层使用 `pdf-lib` 1.17.1 进行 PDF 页面读取和写出，依赖版本锁定在 `package-lock.json`；该库使用 MIT License，未复制其源码。其余拼版规则、MoonBit API 和测试由本项目实现。
 
 **FoldLedger 自身许可证：MIT License，完整文本见仓库根目录 `LICENSE`。**

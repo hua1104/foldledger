@@ -5,6 +5,7 @@
 提交前：
 
 ```powershell
+npm ci
 moon info
 moon fmt
 node scripts/verify.mjs
