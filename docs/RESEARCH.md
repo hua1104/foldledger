@@ -48,7 +48,7 @@
 | 参考 | 已有能力 | FoldLedger 的交付边界 |
 | --- | --- | --- |
 | Adobe Acrobat booklet printing（https://helpx.adobe.com/acrobat/using/print-booklets-pdf-portfolios.html） | PDF 阅读器中的小册子打印 | 不复制阅读器或驱动；提供嵌入 MoonBit 程序的纯规划 API |
-| pdfbook2（https://ctan.org/pkg/pdfbook2） | 基于 TeX 工具链的 PDF 小册子处理 | 不调用 TeX，不转换 PDF；输出可验证页序和补白/分册信息 |
-| MoonLayout Audit（用户参考目录 Desktop/3） | 图坐标、节点/边布局质量审计 | 本项目处理有序页码与物理纸面，未复用其业务代码 |
+| pdfbook2（https://ctan.org/pkg/pdfbook2） | 基于 TeX 工具链的 PDF 小册子处理 | 不调用 TeX；MoonBit 输出可验证页序和补白/分册信息，Node.js 适配层合成 PDF |
+| MoonLayout Audit（用户参考目录 Desktop/3） | 图坐标、节点/边布局质量审计 | 本项目处理有序页码与数字页面槽位，未复用其业务代码 |
 
 上述是产品定位参考链接，未审计或复制这些产品的源码/规则文件，也不在本仓库分发这些产品；因此无上游代码许可证继承关系。FoldLedger 自身使用 MIT。
