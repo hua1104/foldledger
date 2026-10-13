@@ -1,0 +1,15 @@
+{
+  "name": "foldledger-tools",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:planner": "moon build --target js cmd/main",
+    "impose": "npm run build:planner && node scripts/impose-pdf.mjs",
+    "test": "npm run build:planner && node --test tests/cli.integration.test.mjs tests/pdf.integration.test.mjs"
+  },
+  "dependencies": {
+    "pdf-lib": "^1.17.1"
+  }
+}
